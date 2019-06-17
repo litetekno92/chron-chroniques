@@ -93,6 +93,7 @@ class _PostCardState extends State<PostCard> {
         children: <Widget>[
           new Row(
             children: <Widget>[
+              
               new Container(
                 child: post.featuredMedia == 0
                     ? new Container(width: 0, height: 0)
@@ -147,7 +148,8 @@ void clicked(BuildContext context, menu) {
 
 class ItemClick extends StatelessWidget {
   final Post post;
-  ItemClick({this.post});
+  final int index;
+  ItemClick({this.post, this.index});
   //var unescape = new HtmlUnescape();
 //  var text = unescape.convert("&lt;strong&#62;This &quot;escaped&quot; string");
 
@@ -180,6 +182,17 @@ class ItemClick extends StatelessWidget {
             //     BoxDecoration(border: Border.all(color: Colors.redAccent)),
 
             child: Row(children: [
+              Expanded(
+                flex: 3,
+                child:
+               new Container(
+                 
+                  child: ListTile(
+                title: Text("$index",
+                    style: TextStyle(
+                        color: Colors.black, fontWeight: FontWeight.bold)),
+                  )
+               )),
               Expanded(
                   flex: 3,
                   child: FadeInImage.assetNetwork(

@@ -57,6 +57,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.14.11"
+  connectivity:
+    dependency: transitive
+    description:
+      name: connectivity
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.4.3+2"
   convert:
     dependency: transitive
     description:
@@ -127,6 +134,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.7.0"
+  flutter_offline:
+    dependency: "direct main"
+    description:
+      name: flutter_offline
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.2.4+1"
   flutter_test:
     dependency: "direct dev"
     description: flutter
@@ -237,6 +251,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.1.1"
+  platform_aware:
+    dependency: "direct main"
+    description:
+      name: platform_aware
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.4.0"
   queries:
     dependency: "direct main"
     description:

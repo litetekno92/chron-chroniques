@@ -126,8 +126,22 @@ List<Category> categories = [
     page: 1,
   ),
   Category(
+    id: 466,
+    title: "CHRONIQUES PEOPLE",
+    color: Colors.red,
+    icon: FontAwesomeIcons.atom,
+    page: 1,
+  ),
+  Category(
     id: 512,
     title: "CONFIDENCES",
+    color: Colors.red,
+    icon: FontAwesomeIcons.atom,
+    page: 1,
+  ),
+   Category(
+    id: 639,
+    title: "LES COUPS DE COEUR DE CHRONIQUES",
     color: Colors.red,
     icon: FontAwesomeIcons.atom,
     page: 1,
@@ -139,28 +153,7 @@ List<Category> categories = [
     icon: FontAwesomeIcons.atom,
     page: 1,
   ),
-  Category(
-    id: 1010,
-    title: "SANTÉ MAGASINE",
-    color: Colors.red,
-    icon: FontAwesomeIcons.atom,
-    page: 1,
-  ),
-  Category(
-    id: 639,
-    title: "LES COUPS DE COEUR DE CHRONIQUES",
-    color: Colors.red,
-    icon: FontAwesomeIcons.atom,
-    page: 1,
-  ),
-  Category(
-    id: 645,
-    title: "NOS RÉGIONS ONT DU TALENT",
-    color: Colors.red,
-    icon: FontAwesomeIcons.atom,
-    page: 1,
-  ),
-  Category(
+   Category(
     id: 1012,
     title: "ECHOS CAMPAGNE",
     color: Colors.red,
@@ -174,16 +167,16 @@ List<Category> categories = [
     icon: FontAwesomeIcons.atom,
     page: 1,
   ),
-  Category(
-    id: 643,
-    title: "HISTOIRE ET TRADITION",
+   Category(
+    id: 641,
+    title: "L’HISTOIRE DU SENEGAL",
     color: Colors.red,
     icon: FontAwesomeIcons.atom,
     page: 1,
   ),
   Category(
-    id: 641,
-    title: "L’HISTOIRE DU SENEGAL",
+    id: 643,
+    title: "HISTOIRE ET TRADITION",
     color: Colors.red,
     icon: FontAwesomeIcons.atom,
     page: 1,
@@ -195,14 +188,7 @@ List<Category> categories = [
     icon: FontAwesomeIcons.atom,
     page: 1,
   ),
-  Category(
-    id: 462,
-    title: "LE SHOW DE NITA",
-    color: Colors.red,
-    icon: FontAwesomeIcons.atom,
-    page: 1,
-  ),
-  Category(
+   Category(
     id: 1005,
     title: "MICRO TROTTOIR",
     color: Colors.red,
@@ -217,20 +203,35 @@ List<Category> categories = [
     page: 1,
   ),
   Category(
-    id: 466,
-    title: "CHRONIQUES PEOPLE",
+    id: 645,
+    title: "NOS RÉGIONS ONT DU TALENT",
     color: Colors.red,
     icon: FontAwesomeIcons.atom,
     page: 1,
   ),
+ 
   Category(
+    id: 1010,
+    title: "SANTÉ MAGASINE",
+    color: Colors.red,
+    icon: FontAwesomeIcons.atom,
+    page: 1,
+  ),
+    Category(
     id: 531,
     title: "SECRET DE LA REUSSITE",
     color: Colors.red,
     icon: FontAwesomeIcons.atom,
     page: 1,
   ),
-  Category(
+   Category(
+    id: 462,
+    title: "LE SHOW DE NITA",
+    color: Colors.red,
+    icon: FontAwesomeIcons.atom,
+    page: 1,
+  ),
+   Category(
     id: 500,
     title: "UN WEEK END AVEC ",
     color: Colors.red,

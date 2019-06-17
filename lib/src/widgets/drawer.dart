@@ -1,5 +1,7 @@
 import 'dart:convert';
 
+import 'package:flutter/services.dart';
+
 import '../resources/posts_db_provider.dart';
 
 import '../models/category_model.dart';
@@ -28,6 +30,9 @@ import 'dart:developer';
 import 'package:onesignal/onesignal.dart';
 import 'package:sticky_headers/sticky_headers.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:platform_aware/platform_aware.dart';
+import 'package:sqflite/sqflite.dart';
+import 'package:flutter_offline/flutter_offline.dart';
 
 class DrawerItem {
   String title;
@@ -168,6 +173,10 @@ class CustomDrawerState extends State<CustomDrawer>
             bodyPosts.add(posts[i]);
           }
         }
+        var uniqBodyPosts = bodyPosts.toSet().toList();
+        bodyPosts.clear();
+        bodyPosts = uniqBodyPosts;
+
         //  debugPrint("Posts Length :  " + posts.length.toString());
         //  debugPrint("bodyPosts Length :  " + bodyPosts.length.toString());
         // debugPrint("carouselPosts Length :  " + carouselPosts.length.toString());
@@ -289,13 +298,21 @@ class CustomDrawerState extends State<CustomDrawer>
   // Platform messages are asynchronous, so we initialize in an async method.
   Future<void> initPlatformState() async {
     if (!mounted) return;
+    bool vAutoPrompt = false;
+    TargetPlatform targetPlatform = defaultTargetPlatform;
+    if (targetPlatform == TargetPlatform.android) {
+      debugPrint("Your Plateform is : " + TargetPlatform.android.toString());
+    } else {
+      debugPrint("Your Plateform is : " + TargetPlatform.iOS.toString());
+      vAutoPrompt = true;
+    }
 
     OneSignal.shared.setLogLevel(OSLogLevel.verbose, OSLogLevel.none);
 
     OneSignal.shared.setRequiresUserPrivacyConsent(_requireConsent);
 
     var settings = {
-      OSiOSSettings.autoPrompt: false,
+      OSiOSSettings.autoPrompt: vAutoPrompt,
       OSiOSSettings.promptBeforeOpeningPushUrl: true
     };
 
@@ -329,7 +346,6 @@ class CustomDrawerState extends State<CustomDrawer>
             context,
             MaterialPageRoute(
               builder: (context) => ShowPost(title: title, url: url),
-              
             ));
       });
     });
@@ -407,6 +423,7 @@ class CustomDrawerState extends State<CustomDrawer>
     _githubTapRecognizer.dispose();
     _tabController.dispose();
     _scrollController.dispose();
+    postsDbProvider.close();
     super.dispose();
   }
 
@@ -427,7 +444,7 @@ class CustomDrawerState extends State<CustomDrawer>
                                 post:
                                     item); // you can add your unavailable item here
                           },
-                          childCount: bodyPosts.length,
+                          //       childCount: bodyPosts.length,
                         ),
                       )
                     ]))
@@ -453,7 +470,7 @@ class CustomDrawerState extends State<CustomDrawer>
                                   post:
                                       item); // you can add your unavailable item here
                             },
-                            childCount: bodyPosts.length,
+                            //                  childCount: bodyPosts.length,
                           ),
                         )
                       : noPost()
@@ -669,160 +686,178 @@ class CustomDrawerState extends State<CustomDrawer>
                   ])))));
     }
 
-    return new Scaffold(
-        appBar: new AppBar(
-          backgroundColor: CustomColor.mgreycol,
-          title: _appBarTitle,
-          actions: <Widget>[
-            IconButton(
-              color: Colors.white,
-              icon: _searchIcon,
-              onPressed: _searchPressed,
-            ),
-            IconButton(
-              color: Colors.white,
-              tooltip: 'Paramètres',
-              icon: Icon(Icons.settings),
-              onPressed: () {
-                //       clicked(context, "Notifications");
-                _getPrefs();
-                showDialog(
-                  context: context,
-                  builder: (BuildContext context) => _buildAboutDialog(context),
-                );
-              },
-            ),
-            // Container(
-            //     decoration: BoxDecoration(
-            //       color: CustomColor.mgreycol,
-            //     ),
-            //     child: PopupMenuButton(
-            //       itemBuilder: (BuildContext context) {
-            //         return [
-            //           PopupMenuItem(
-            //             child: IconButton(
-            //               color: Colors.black,
-            //               tooltip: 'Notifications',
-            //               icon: Icon(Icons.notifications),
-            //               onPressed: () {
-            //                 //       clicked(context, "Notifications");
-            //                 showDialog(
-            //                   context: context,
-            //                   builder: (BuildContext context) =>
-            //                       _buildAboutDialog(context),
-            //                 );
-
-            //               },
-            //             ),
-            //           ),
-            //           PopupMenuItem(
-            //             child: IconButton(
-            //               color: Colors.black,
-            //               tooltip: 'Paramètres',
-            //               icon: Icon(Icons.settings),
-            //               onPressed: () {
-            //                 clicked(context, "Paramètres");
-            //               },
-            //             ),
-            //           ),
-            //         ];
-            //       },
-            //     ))
-          ],
-          bottom: _searchOnProgress
-              ? PreferredSize(
-                  child: Container(),
-                  preferredSize: null,
-                )
-              : TabBar(
-                  isScrollable: true,
-                  controller: _tabController,
-                  labelPadding:
-                      EdgeInsets.symmetric(vertical: 16.0, horizontal: 16.0),
-                  tabs: drawerItems.map((tab) => Text(tab.title)).toList(),
-                  indicatorColor: CustomColor.mbluecol,
+    return OfflineBuilder(
+        debounceDuration: Duration.zero,
+        connectivityBuilder: (
+          BuildContext context,
+          ConnectivityResult connectivity,
+          Widget child,
+        ) {
+          if (connectivity == ConnectivityResult.none) {
+            return Scaffold(
+                appBar: AppBar(
+                  title: _appBarTitle,
+                  //               const Text('Home'),
                 ),
-        ),
-        drawer: Drawer(
-            child: ListView(children: <Widget>[
-          StickyHeader(
-              header: Container(
-                decoration: BoxDecoration(color: CustomColor.mgreycol),
-                child: _appBarTitle,
-              ),
-              content:
-                  Column(mainAxisSize: MainAxisSize.min, children: <Widget>[
-                Flexible(
-                  fit: FlexFit.loose,
-                  child: ListView(
-                    shrinkWrap: true,
-                    physics: ScrollPhysics(),
-                    children: drawerOptions,
-                  ),
-                )
-              ]))
-        ])),
-        body: isLoading
-            ? Center(
-                child: new CircularProgressIndicator(
-                    valueColor:
-                        AlwaysStoppedAnimation<Color>(CustomColor.mbluecol)))
-            : !displayCarousel
-                ? displayBody
-                    ? Column(children: [
-                        Expanded(
-                            child: CustomScrollView(
-                                controller: _scrollController,
-                                slivers: <Widget>[
-                              SliverList(
-                                delegate: SliverChildBuilderDelegate(
-                                  (BuildContext context, int index) {
-                                    final item = bodyPosts[index];
-                                    if (index > bodyPosts.length) return null;
-                                    return ItemClick(
-                                        post:
-                                            item); // you can add your unavailable item here
-                                  },
-                                  childCount: bodyPosts.length,
-                                ),
-                              )
-                            ]))
-                      ])
-                    : noPost()
-                : Column(children: [
-                    Expanded(
-                        child: CustomScrollView(
-                            controller: _scrollController,
-                            slivers: <Widget>[
-                          SliverList(
-                            delegate: SliverChildListDelegate([
-                              CarouselWithIndicator(carouselPosts),
-                            ]),
-                          ),
-                          displayBody
-                              ? SliverList(
-                                  delegate: SliverChildBuilderDelegate(
-                                    (BuildContext context, int index) {
-                                      final item = bodyPosts[index];
-                                      if (index > bodyPosts.length) return null;
-                                      return ItemClick(
-                                          post:
-                                              item); // you can add your unavailable item here
-                                    },
-                                    childCount: bodyPosts.length,
+                body: Center(
+                    child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                      Text('Vérifiez votre connexion internet!',
+                          style: TextStyle(
+                              fontSize: 24,
+                              color: Colors.red,
+                              fontWeight: FontWeight.bold)),
+                      Text('Puis redémarrer votre application',
+                          style: TextStyle(
+                              fontSize: 24,
+                              color: Colors.red,
+                              fontWeight: FontWeight.bold)),
+                      RaisedButton(
+                        child: Text(
+                          'Quitter',
+                          style: TextStyle(fontSize: 20),
+                        ),
+                        onPressed: () {
+                          SystemChannels.platform
+                              .invokeMethod<void>('SystemNavigator.pop');
+                        },
+                      ),
+                    ])));
+          }
+          return child;
+        },
+        // @override
+        // Widget build(BuildContext context) {
+        child:
+
+            //   return new
+            Scaffold(
+                appBar: new AppBar(
+                  backgroundColor: CustomColor.mgreycol,
+                  title: _appBarTitle,
+                  actions: <Widget>[
+                    IconButton(
+                      color: Colors.white,
+                      icon: _searchIcon,
+                      onPressed: _searchPressed,
+                    ),
+                    IconButton(
+                      color: Colors.white,
+                      tooltip: 'Paramètres',
+                      icon: Icon(Icons.settings),
+                      onPressed: () {
+                        //       clicked(context, "Notifications");
+                        _getPrefs();
+                        showDialog(
+                          context: context,
+                          builder: (BuildContext context) =>
+                              _buildAboutDialog(context),
+                        );
+                      },
+                    ),
+                  ],
+                  bottom: _searchOnProgress
+                      ? PreferredSize(
+                          child: Container(),
+                          preferredSize: null,
+                        )
+                      : TabBar(
+                          isScrollable: true,
+                          controller: _tabController,
+                          labelPadding: EdgeInsets.symmetric(
+                              vertical: 16.0, horizontal: 16.0),
+                          tabs: drawerItems
+                              .map((tab) => Text(tab.title))
+                              .toList(),
+                          indicatorColor: CustomColor.mbluecol,
+                        ),
+                ),
+                drawer: Drawer(
+                    child: ListView(children: <Widget>[
+                  StickyHeader(
+                      header: Container(
+                        decoration: BoxDecoration(color: CustomColor.mgreycol),
+                        child: _appBarTitle,
+                      ),
+                      content: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: <Widget>[
+                            Flexible(
+                              fit: FlexFit.loose,
+                              child: ListView(
+                                shrinkWrap: true,
+                                physics: ScrollPhysics(),
+                                children: drawerOptions,
+                              ),
+                            )
+                          ]))
+                ])),
+                body: isLoading
+                    ? Center(
+                        child: new CircularProgressIndicator(
+                            valueColor: AlwaysStoppedAnimation<Color>(
+                                CustomColor.mbluecol)))
+                    : !displayCarousel
+                        ? displayBody
+                            ? Column(children: [
+                                Expanded(
+                                    child: CustomScrollView(
+                                        controller: _scrollController,
+                                        slivers: <Widget>[
+                                      SliverList(
+                                        delegate: SliverChildBuilderDelegate(
+                                          (BuildContext context, int index) {
+                                            final item = bodyPosts[index];
+                                            if (index > bodyPosts.length)
+                                              return null;
+                                            return ItemClick(
+                                                post: item,
+                                                index:
+                                                    index); // you can add your unavailable item here
+                                          },
+                                          childCount: bodyPosts.length,
+                                        ),
+                                      )
+                                    ]))
+                              ])
+                            : noPost()
+                        : Column(children: [
+                            Expanded(
+                                child: CustomScrollView(
+                                    controller: _scrollController,
+                                    slivers: <Widget>[
+                                  SliverList(
+                                    delegate: SliverChildListDelegate([
+                                      CarouselWithIndicator(carouselPosts),
+                                    ]),
                                   ),
-                                )
-                              : SliverList(
-                                  delegate: SliverChildBuilderDelegate(
-                                    (BuildContext context, int index) {
-                                      return noPost();
-                                    },
-                                    childCount:
-                                        1, // you can add your unavailable item here
-                                  ),
-                                )
-                        ]))
-                  ]));
+                                  displayBody
+                                      ? SliverList(
+                                          delegate: SliverChildBuilderDelegate(
+                                            (BuildContext context, int index) {
+                                              final item = bodyPosts[index];
+                                              if (index > bodyPosts.length)
+                                                return null;
+                                              return ItemClick(
+                                                  post: item,
+                                                  index:
+                                                      index); // you can add your unavailable item here
+                                            },
+                                            childCount: bodyPosts.length,
+                                          ),
+                                        )
+                                      : SliverList(
+                                          delegate: SliverChildBuilderDelegate(
+                                            (BuildContext context, int index) {
+                                              return noPost();
+                                            },
+                                            childCount:
+                                                1, // you can add your unavailable item here
+                                          ),
+                                        )
+                                ]))
+                          ])));
   }
 }
 

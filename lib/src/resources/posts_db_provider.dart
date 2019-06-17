@@ -10,13 +10,14 @@ import 'package:path_provider/path_provider.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:queries/collections.dart';
 import 'package:queries/queries.dart';
+
 int _mypage$count = 1;
 
 class PostsDbProvider implements Source, Cache {
   static final _databaseName = "Chroniques_1.db";
   static final _databaseVersion = 1;
   static final table = 'Posts';
- 
+
   // make this a singleton class
   PostsDbProvider._privateConstructor();
   static final PostsDbProvider instance = PostsDbProvider._privateConstructor();
@@ -59,9 +60,14 @@ class PostsDbProvider implements Source, Cache {
     return null;
   }
 
-  
+  Future<bool> close() async {
+    Database db = await instance.database;
+    db.close();
+    return true;
+  }
+
   Future<int> clear() async {
-     Database db = await instance.database;
+    Database db = await instance.database;
     return db.delete("Posts");
   }
 
@@ -69,12 +75,15 @@ class PostsDbProvider implements Source, Cache {
   Future<int> addPosts(int category, List<Post> posts) async {
     int nbRecords = 0;
     int nbTotalRecords = 0;
-    Database db = await instance.database;
-    for (var post in posts) {
-     nbRecords = await insertPost(post) ?? 0;
-          
+    posts.forEach((post) async {
+      nbRecords = await insertPost(post) ?? 0;
       nbTotalRecords = nbTotalRecords + nbRecords;
-    }
+    });
+    // for (var post in posts) {
+    //   nbRecords = await insertPost(post) ?? 0;
+
+    //   nbTotalRecords = nbTotalRecords + nbRecords;
+    // }
     return nbTotalRecords;
   }
 
@@ -82,18 +91,18 @@ class PostsDbProvider implements Source, Cache {
   Future<List<Post>> fetchDataCat(int category, int page) async {
     List<Post> posts;
 
-     var queryResponse = await instance.queryAllPosts();
-        posts= queryResponse.map((parsedJson)=>Post.fromDb(parsedJson)).toList();
-        var catposts = posts.where((l) => l.categories.contains(category)).toList();
-        posts=catposts.toSet().toList();
-        // var ncatposts = new Collection(posts).distinct();
+    var queryResponse = await instance.queryAllPosts();
+    posts = queryResponse.map((parsedJson) => Post.fromDb(parsedJson)).toList();
+    print('dbRead before filter #posts : ' + (posts.length).toString());
+    var catposts = posts.where((l) => l.categories.contains(category)).toList();
+    posts = catposts.toSet().toList();
+    // var ncatposts = new Collection(posts).distinct();
 
-       
-        // posts=ncatposts as List<Post>;
-     print('dbRead #posts : ' +  (posts.length).toString());
-    
-      if (posts.length > 0) {
-            return posts;
+    // posts=ncatposts as List<Post>;
+    print('dbRead #posts : ' + (posts.length).toString());
+
+    if (posts.length > 0) {
+      return posts;
     }
     return null;
   }
@@ -104,85 +113,86 @@ class PostsDbProvider implements Source, Cache {
     return null;
   }
 
+  Future<int> insertPost(Post post) async {
+    Database db = await instance.database;
+    var postMap = post.toMap();
+    return await db.insert(
+      'Posts',
+      postMap,
+      conflictAlgorithm: ConflictAlgorithm.ignore,
+    );
+  }
 
-Future<int> insertPost(Post post) async {
-  Database db = await instance.database;
-  return await db.insert('Posts', post.toMap(),conflictAlgorithm: ConflictAlgorithm.ignore,);
-}
+  Future<int> updatePost(Post post) async {
+    Database db = await instance.database;
+    int id = post.id;
+    return await db
+        .update('Posts', post.toMap(), where: 'id = ?', whereArgs: [id]);
+  }
 
-Future<int> updatePost(Post post) async {
-  Database db = await instance.database;
-  int id = post.id;
-  return await db
-      .update('Posts', post.toMap(), where: 'id = ?', whereArgs: [id]);
-}
+  Future<List<Map<String, dynamic>>> queryAllPosts() async {
+    Database db = await instance.database;
+    //  return await db.query('Posts');
+    // return await db.query('Posts',  orderBy: "date DESC");
+    return await db.rawQuery("SELECT * FROM Posts order By date DESC");
+    //Cursor cc = db.rawQuery("select col1 from table where col2=? and col3=?",new String[] { "value for col2", "value for col3" });
+  }
 
-Future<List<Map<String, dynamic>>> queryAllPosts() async {
-  Database db = await instance.database;
-  //  return await db.query('Posts');
-  // return await db.query('Posts',  orderBy: "date DESC");
-  return await db.rawQuery("SELECT * FROM Posts order By date DESC");
-  //Cursor cc = db.rawQuery("select col1 from table where col2=? and col3=?",new String[] { "value for col2", "value for col3" });
-}
-
-Future<int> deletePosts(int id) async {
+  Future<int> deletePosts(int id) async {
     Database db = await instance.database;
     return await db.delete('Posts', where: 'id = ?', whereArgs: [id]);
   }
 
   Future<int> deleteAllPosts() async {
     Database db = await instance.database;
-    return await db.delete('Posts', where: null,  whereArgs:  null);
+    return await db.delete('Posts', where: null, whereArgs: null);
   }
 
-Future<bool> deleteDb({String path}) async {
-  Directory documentsDirectory = await getApplicationDocumentsDirectory();
-  String path = join(documentsDirectory.path, _databaseName);
-  await deleteDatabase(path);
-  return true;
-}
-
-Future<bool> dropTable({String table}) async {
-  Database db = await instance.database;
-  await db.rawQuery(' DROP TABLE IF EXISTS Posts');
-  return true;
-}
-
-Future<int> insertOrReplacePost(Post post) async {
-  Database db = await instance.database;
-  
-  int rowcount = await postsDbProvider.updatePost(post);
-  if (rowcount == 0) {
-    return await postsDbProvider.insertPost(post);
-  } else {
-    return rowcount;
-  }
-}
-
-void dropTablePosts() async {
-    // Assuming that the number of rows is the id for the last row.
-   
-    var response =      await postsDbProvider.dropTable();
-            print('Table Posts dropped : ' + response.toString() );
-   
-  }
- 
-PostsApiProvider postApiProvider = PostsApiProvider();
-
-Future<bool> apiRead() async {
-     Database db = await instance.database;
-         var page = _mypage$count++;
-         print('apiRead #page : ' +  page.toString());
-        var posts = await postApiProvider.fetchDataCat(1,page);
-        print('apiRead #posts : ' +  (posts.length).toString());
-    for(var post in posts) {
-     postsDbProvider.insertOrReplacePost(post);
-    }
+  Future<bool> deleteDb({String path}) async {
+    Directory documentsDirectory = await getApplicationDocumentsDirectory();
+    String path = join(documentsDirectory.path, _databaseName);
+    await deleteDatabase(path);
     return true;
   }
 
+  Future<bool> dropTable({String table}) async {
+    Database db = await instance.database;
+    await db.rawQuery(' DROP TABLE IF EXISTS Posts');
+    return true;
+  }
+
+  Future<int> insertOrReplacePost(Post post) async {
+    Database db = await instance.database;
+
+    int rowcount = await postsDbProvider.updatePost(post);
+    if (rowcount == 0) {
+      return await postsDbProvider.insertPost(post);
+    } else {
+      return rowcount;
+    }
+  }
+
+  void dropTablePosts() async {
+    // Assuming that the number of rows is the id for the last row.
+
+    var response = await postsDbProvider.dropTable();
+    print('Table Posts dropped : ' + response.toString());
+  }
+
+  PostsApiProvider postApiProvider = PostsApiProvider();
+
+  Future<bool> apiRead() async {
+    Database db = await instance.database;
+    var page = _mypage$count++;
+    print('apiRead #page : ' + page.toString());
+    var posts = await postApiProvider.fetchDataCat(1, page);
+    print('apiRead #posts : ' + (posts.length).toString());
+    for (var post in posts) {
+      postsDbProvider.insertOrReplacePost(post);
+    }
+    return true;
+  }
 }
+
 //PostsDbProvider postDbProvider = PostsDbProvider();
 final postsDbProvider = PostsDbProvider.instance;
-
-
