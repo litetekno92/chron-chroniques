@@ -182,17 +182,17 @@ class ItemClick extends StatelessWidget {
             //     BoxDecoration(border: Border.all(color: Colors.redAccent)),
 
             child: Row(children: [
-              Expanded(
-                flex: 3,
-                child:
-               new Container(
+              // Expanded(
+              //   flex: 3,
+              //   child:
+              //  new Container(
                  
-                  child: ListTile(
-                title: Text("$index",
-                    style: TextStyle(
-                        color: Colors.black, fontWeight: FontWeight.bold)),
-                  )
-               )),
+              //     child: ListTile(
+              //   title: Text("$index",
+              //       style: TextStyle(
+              //           color: Colors.black, fontWeight: FontWeight.bold)),
+              //     )
+              //  )),
               Expanded(
                   flex: 3,
                   child: FadeInImage.assetNetwork(

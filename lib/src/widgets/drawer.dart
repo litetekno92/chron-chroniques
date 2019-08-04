@@ -259,6 +259,9 @@ class CustomDrawerState extends State<CustomDrawer>
     if (_scrollController.position.pixels ==
         _scrollController.position.maxScrollExtent) {
       _goFetchDataCat(_selectedDrawerIndex);
+      _scrollController.jumpTo(_scrollController.position.maxScrollExtent);
+      // _scrollController.animateTo(0.0,
+      //     curve: Curves.easeOut, duration: const Duration(milliseconds: 300));
     }
   }
 
@@ -454,6 +457,8 @@ class CustomDrawerState extends State<CustomDrawer>
             Expanded(
                 child: CustomScrollView(
                     controller: _scrollController,
+                    reverse: true,
+                  shrinkWrap: true,
                     slivers: <Widget>[
                   SliverList(
                     delegate: SliverChildListDelegate([
@@ -464,8 +469,9 @@ class CustomDrawerState extends State<CustomDrawer>
                       ? SliverList(
                           delegate: SliverChildBuilderDelegate(
                             (BuildContext context, int index) {
-                              final item = bodyPosts[index];
                               if (index > bodyPosts.length) return null;
+                              final item = bodyPosts[index];
+                              
                               return ItemClick(
                                   post:
                                       item); // you can add your unavailable item here
@@ -808,9 +814,10 @@ class CustomDrawerState extends State<CustomDrawer>
                                       SliverList(
                                         delegate: SliverChildBuilderDelegate(
                                           (BuildContext context, int index) {
-                                            final item = bodyPosts[index];
-                                            if (index > bodyPosts.length)
+                                             if (index > bodyPosts.length)
                                               return null;
+                                            final item = bodyPosts[index];
+                                           
                                             return ItemClick(
                                                 post: item,
                                                 index:
@@ -836,9 +843,10 @@ class CustomDrawerState extends State<CustomDrawer>
                                       ? SliverList(
                                           delegate: SliverChildBuilderDelegate(
                                             (BuildContext context, int index) {
-                                              final item = bodyPosts[index];
                                               if (index > bodyPosts.length)
                                                 return null;
+                                              final item = bodyPosts[index];
+                                              
                                               return ItemClick(
                                                   post: item,
                                                   index:

@@ -64,7 +64,22 @@ android {
         release {
             // TODO: Add your own signing config for the release build.
             // Signing with the debug keys for now, so `flutter run --release` works.
-            signingConfig signingConfigs.debug
+           signingConfig signingConfigs.debug
+//             signingConfigs {
+//     release {
+//         keyAlias keystoreProperties['chroniques.sn-release-key']
+//         keyPassword keystoreProperties['CeusigaS!443']
+//         storePassword keystoreProperties['CeusigaS!443']
+
+//         if (Os.isFamily(Os.FAMILY_WINDOWS)) {
+//             storeFile file(keystoreProperties['C:\Devel\Chroniques\chroniques.sn-release-key.keystore-jks'])
+//         } else if (Os.isFamily(Os.FAMILY_UNIX)) {
+//             storeFile file(keystoreProperties['storeFileLinux'])
+//         } else if (Os.isFamily(Os.FAMILY_MAC)) {
+//             storeFile file(keystoreProperties['storeFileMac'])
+//         }
+//     }
+// }
         }
     }
 }
