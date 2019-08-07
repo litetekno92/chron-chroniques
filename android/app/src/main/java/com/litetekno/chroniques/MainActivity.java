@@ -1,4 +1,4 @@
-package com.litetekno.chroniques;
+package sn.chroniques.chroniques;
 
 import android.os.Bundle;
 import io.flutter.app.FlutterActivity;

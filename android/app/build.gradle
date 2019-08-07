@@ -47,7 +47,7 @@ android {
 
     defaultConfig {
         // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
-        applicationId "com.litetekno.chroniques"
+        applicationId "sn.chroniques.chroniques"
         manifestPlaceholders = [
         onesignal_app_id: "3900ace4-ad42-4161-b9a4-17726c91ce02",
           // Project number pulled from dashboard, local value is ignored.
