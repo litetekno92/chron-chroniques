@@ -1,34 +1,34 @@
 {
   "project_info": {
-    "project_number": "745665773781",
-    "firebase_url": "https://chroniques-c93f5.firebaseio.com",
-    "project_id": "chroniques-c93f5",
-    "storage_bucket": "chroniques-c93f5.appspot.com"
+    "project_number": "944584804461",
+    "firebase_url": "https://chroniques-sn.firebaseio.com",
+    "project_id": "chroniques-sn",
+    "storage_bucket": "chroniques-sn.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:745665773781:android:eff45372abe67145",
+        "mobilesdk_app_id": "1:944584804461:android:60f0b3caf24b9ef3",
         "android_client_info": {
-          "package_name": "com.litetekno.chroniques"
+          "package_name": "sn.chroniques.chroniques"
         }
       },
       "oauth_client": [
         {
-          "client_id": "745665773781-hdaplfb0j8mtg73hdl6mh25dca85putt.apps.googleusercontent.com",
+          "client_id": "944584804461-mic9fuq0pcjrqc06bkeljc3h9omj7a4d.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyAIArZnK0H4MXViFCCR1d8yTwmWj7ZkQuY"
+          "current_key": "AIzaSyDudl4N7yN4waHXiaXqr-t-YWyStuyIXU8"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "745665773781-hdaplfb0j8mtg73hdl6mh25dca85putt.apps.googleusercontent.com",
+              "client_id": "944584804461-mic9fuq0pcjrqc06bkeljc3h9omj7a4d.apps.googleusercontent.com",
               "client_type": 3
             }
           ]
