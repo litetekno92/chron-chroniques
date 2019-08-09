@@ -323,7 +323,7 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/Flutter",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.litetekno.chroniques;
+				PRODUCT_BUNDLE_IDENTIFIER = sn.chroniques.chroniques;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				VERSIONING_SYSTEM = "apple-generic";
 			};
