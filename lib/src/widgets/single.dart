@@ -167,18 +167,18 @@ class _SinglePostState extends State<SinglePost> {
                       },
                     ),
                   ),
-                  Expanded(
-                    flex: 1,
-                    child: IconButton(
-                      icon: new Icon(
-                        Icons.bookmark,
-                        color: Colors.black54,
-                      ),
-                      onPressed: () {
-                        print("Pressed");
-                      },
-                    ),
-                  ),
+                  // Expanded(
+                  //   flex: 1,
+                  //   child: IconButton(
+                  //     icon: new Icon(
+                  //       Icons.bookmark,
+                  //       color: Colors.black54,
+                  //     ),
+                  //     onPressed: () {
+                  //       print("Pressed");
+                  //     },
+                  //   ),
+                  // ),
                   Expanded(
                     flex: 1,
                     child: IconButton(
@@ -199,19 +199,19 @@ class _SinglePostState extends State<SinglePost> {
                       },
                     ),
                   ),
-                  Expanded(
-                    flex: 1,
-                    child: IconButton(
-                      icon: new Icon(
-                        Icons.font_download,
-                        color: Colors.black54,
-                      ),
-                      onPressed: () {
-                        //             _launchURL(post.link);
-                        print("Pressed");
-                      },
-                    ),
-                  ),
+                  // Expanded(
+                  //   flex: 1,
+                  //   child: IconButton(
+                  //     icon: new Icon(
+                  //       Icons.font_download,
+                  //       color: Colors.black54,
+                  //     ),
+                  //     onPressed: () {
+                  //       //             _launchURL(post.link);
+                  //       print("Pressed");
+                  //     },
+                  //   ),
+                  // ),
                 ])
               ],
             ),
