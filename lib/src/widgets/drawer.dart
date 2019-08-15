@@ -149,6 +149,9 @@ class CustomDrawerState extends State<CustomDrawer>
 
       setState(() {
         posts.addAll(newPosts);
+        var uniqPosts = posts.toSet().toList();
+        posts.clear();
+        posts = uniqPosts;
 
         //  allPosts[categories[categoryIndex].title].addAll(newPosts);
         //    posts=allPosts[categories[categoryIndex].title];
